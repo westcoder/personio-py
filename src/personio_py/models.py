@@ -821,6 +821,8 @@ class Attendance(WritablePersonioResource):
         if isinstance(project, dict):
             if isinstance(project["id"], int):
                 self.project = project["id"]
+        elif isinstance(project, int):
+            self.project = project
 
     def to_dict(self, nested=False) -> Dict[str, Any]:
         # yes, this is weird an unnecessary, but that's how the api works
