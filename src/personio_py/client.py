@@ -281,8 +281,27 @@ class Personio:
 
         :return: list of ``Employee`` instances
         """
-        response = self.request_json("company/employees")
-        employees = [Employee.from_dict(d, self) for d in response["data"]]
+        employees = []
+        offset = 0
+        limit = 100
+        response = self.request_json(
+            "company/employees",
+            params={
+                "limit": limit,
+                "offset": offset * limit,
+            }
+        )
+        while response:
+            for d in response["data"]:
+                employees.append(Employee.from_dict(d, self))
+            offset += 1
+            response = self.request_json(
+                "company/employees",
+                params={
+                    "limit": limit,
+                    "offset": offset * limit,
+                }
+            )
         return employees
 
     def get_employee(self, employee_id: int) -> Employee:
