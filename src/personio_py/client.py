@@ -291,7 +291,7 @@ class Personio:
                 "offset": offset * limit,
             }
         )
-        while response:
+        while response["data"]:
             for d in response["data"]:
                 employees.append(Employee.from_dict(d, self))
             offset += 1
