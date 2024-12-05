@@ -1,6 +1,7 @@
 """
 Implementation of the Personio API functions
 """
+
 import logging
 import os
 from datetime import datetime
@@ -289,7 +290,7 @@ class Personio:
             params={
                 "limit": limit,
                 "offset": offset * limit,
-            }
+            },
         )
         while response["data"]:
             for d in response["data"]:
@@ -300,7 +301,7 @@ class Personio:
                 params={
                     "limit": limit,
                     "offset": offset * limit,
-                }
+                },
             )
         return employees
 
@@ -396,7 +397,9 @@ class Personio:
             attendance._client = self
         return attendances
 
-    def create_attendances(self, attendances: List[Attendance]) -> bool:
+    def create_attendances(
+        self, attendances: List[Attendance], skip_approval=False
+    ) -> bool:
         """
         Create all given attendance records.
 
@@ -404,6 +407,7 @@ class Personio:
         their corresponding objects passed as attendances will not be updated.
 
         :param attendances: A list of attendance records to be created.
+        :param skip_approval: If True, the attendances will be created without approval.
         """
         data_to_send = [
             attendance.to_body_params(patch_existing_attendance=False)
@@ -412,7 +416,7 @@ class Personio:
         response = self.request_json(
             path=self.ATTENDANCE_URL,
             method="POST",
-            data={"attendances": data_to_send, "skip_approval": False},
+            data={"attendances": data_to_send, "skip_approval": skip_approval},
         )
         if response["success"]:
             for attendance, response_id in zip(attendances, response["data"]["id"]):
